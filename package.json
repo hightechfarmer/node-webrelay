@@ -9,6 +9,7 @@
   "author": "Nicholas Kristoffersen <nicholas.kristoffersen@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "q": "^1.4.1",
     "request": "^2.79.0",
     "xml2json": "^0.11.0"
   }
