@@ -7,7 +7,7 @@ npm install nkristoffersen/node-webrelay
 ```
 
 ## usage
-- Add to your node project
+- Add to your node project and include the local IP address of the web relay.
 ```
 const webRelay = require('@nkristoffersen/node-webrelay')('http://192.168.1.2');
 ```
