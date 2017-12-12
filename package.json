@@ -1,15 +1,14 @@
 {
-  "name": "@nkristoffersen/node-webrelay",
-  "version": "0.0.1",
-  "description": "",
+  "name": "@kevinbalouch/node-webrelay",
+  "version": "1.0.0",
+  "description": "Unofficial easy-to-use Promise-wrapped API for the Control by Web WebRelay™.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Nicholas Kristoffersen <nicholas.kristoffersen@gmail.com>",
+  "author": "Kevin Christiansen <kevin.balouch@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "q": "^1.4.1",
     "request": "^2.79.0",
     "xml2json": "^0.11.0"
   }

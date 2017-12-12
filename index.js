@@ -1,53 +1,85 @@
 'use strict';
-var request = require('request');
-var parser = require('xml2json');
-var Q = require('q');
+const request = require('request');
+const parser  = require('xml2json');
 
-var webRelay = function () {};
-
-webRelay.prototype.status = function (relayAddress, callback) {
-	var deferred = Q.defer();
-	request.get(relayAddress + '/stateFull.xml', function (error, response, body) {
-		if (!error && response.statusCode == 200) {
-			var json = JSON.parse(parser.toJson(body));
-			var relayResponse = json.datavalues
-			deferred.resolve(relayResponse);
-		} else {
-			deferred.reject('error with getting relay status!');
-		}
-	});
-	deferred.promise.nodeify(callback);
-	return deferred.promise;
+// Settings for xml2json parser
+const PARSER_SETTINGS = {
+  object: true,
+  sanitize: true
 };
 
-webRelay.prototype.close = function (relayAddress, callback) {
-	var deferred = Q.defer();
-	request.get(relayAddress + '/stateFull.xml?relayState=1', function (error, response, body) {
-		if (!error && response.statusCode == 200) {
-			var json = JSON.parse(parser.toJson(body));
-			var relayResponse = json.datavalues
-			deferred.resolve(relayResponse);
-		} else {
-			deferred.reject('error with setting relay to 1!');
-		}
-	});
-	deferred.promise.nodeify(callback);
-	return deferred.promise;
-};
+// Module
+function WebRelay(address) {
+  if (!address || typeof address !== 'string') {
+    throw '[WebRelay]: Address cannot be blank or a non-string value.';
+  }
 
-webRelay.prototype.open = function (relayAddress, callback) {
-	var deferred = Q.defer();
-	request.get(relayAddress + '/stateFull.xml?relayState=0', function (error, response, body) {
-		if (!error && response.statusCode == 200) {
-			var json = JSON.parse(parser.toJson(body));
-			var relayResponse = json.datavalues
-			deferred.resolve(relayResponse);
-		} else {
-			deferred.reject('error with setting relay to 0!');
-		}
-	});
-	deferred.promise.nodeify(callback);
-	return deferred.promise;
-};
+  const API = {
+    // Fetching status from relay
+    // @return Promise
+    status() {
+      return new Promise((resolve, reject) => {
+        request.get(address + '/stateFull.xml', function (err, res, body) {
+          if (!err && res.statusCode === 200) {
+            const jsonRes  = parser.toJson(body, PARSER_SETTINGS);
 
-exports.webRelay = new webRelay();
+            if (jsonRes.datavalues) {
+              resolve(jsonRes.datavalues);
+            } else {
+              reject('Could not get .datavalues from response, while getting status.');
+            }
+
+          } else {
+            reject('Relay returned non-200 status: ' + res.statusCode);
+          }
+        });
+      });
+    },
+
+    // Closing the relay
+    // @return Promise
+    close() {
+      return new Promise((resolve, reject) => {
+        request.get(address + '/stateFull.xml?relayState=1', function (err, res, body) {
+          if (!err && res.statusCode === 200) {
+            const jsonRes = parser.toJson(body, PARSER_SETTINGS);
+
+            if (jsonRes.datavalues) {
+              resolve(jsonRes.datavalues);
+            } else {
+              reject('Could not get .datavalues from response, while closing door.');
+            }
+
+          } else {
+            reject('Error while closing relay: ', res);
+          }
+        });
+      });
+    },
+
+    // Opening the relay
+    // @return Promise
+    open() {
+      return new Promise((resolve, reject) => {
+        request.get(address + '/stateFull.xml?relayState=0', function (err, res, body) {
+          if (!err && res.statusCode === 200) {
+            const jsonRes = parser.toJson(body, PARSER_SETTINGS);
+
+            if (jsonRes.datavalues) {
+              resolve(jsonRes.datavalues);
+            } else {
+              reject('Could not get .datavalues from response, while opening door.');
+            }
+
+          } else {
+            reject('Error while opening relay: ', res);
+          }
+        });
+      });
+    }
+  };
+
+  return API;
+}
+
+exports.webRelay = WebRelay;
