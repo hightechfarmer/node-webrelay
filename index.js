@@ -1,11 +1,10 @@
 'use strict';
-const request = require('request');
+const Request = require('request');
 const parser  = require('xml2json');
 
-const req = request({
+const request = Request.defaults({
   timeout: 5000
 })
-
 // Settings for xml2json parser
 const PARSER_SETTINGS = {
   object: true,
@@ -23,7 +22,7 @@ function WebRelay(address) {
     // @return Promise
     status() {
       return new Promise((resolve, reject) => {
-        req.get(address + '/stateFull.xml', function (err, res, body) {
+        request.get(address + '/stateFull.xml', function (err, res, body) {
           if (!err && res.statusCode === 200) {
             const jsonRes  = parser.toJson(body, PARSER_SETTINGS);
 
@@ -44,7 +43,7 @@ function WebRelay(address) {
     // @return Promise
     close() {
       return new Promise((resolve, reject) => {
-        req.get(address + '/stateFull.xml?relayState=1', function (err, res, body) {
+        request.get(address + '/stateFull.xml?relayState=1', function (err, res, body) {
           if (!err && res.statusCode === 200) {
             const jsonRes = parser.toJson(body, PARSER_SETTINGS);
 
@@ -65,7 +64,7 @@ function WebRelay(address) {
     // @return Promise
     open() {
       return new Promise((resolve, reject) => {
-        req.get(address + '/stateFull.xml?relayState=0', function (err, res, body) {
+        request.get(address + '/stateFull.xml?relayState=0', function (err, res, body) {
           if (!err && res.statusCode === 200) {
             const jsonRes = parser.toJson(body, PARSER_SETTINGS);
 
