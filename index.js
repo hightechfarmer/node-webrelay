@@ -48,7 +48,9 @@ function WebRelay(address) {
             const jsonRes = parser.toJson(body, PARSER_SETTINGS);
 
             if (jsonRes.datavalues) {
-              resolve(jsonRes.datavalues);
+              resolve({
+                closing: true
+              });
             } else {
               reject('Could not get .datavalues from response, while closing door.');
             }
@@ -69,7 +71,9 @@ function WebRelay(address) {
             const jsonRes = parser.toJson(body, PARSER_SETTINGS);
 
             if (jsonRes.datavalues) {
-              resolve(jsonRes.datavalues);
+              resolve({
+                unlocking: true
+              });
             } else {
               reject('Could not get .datavalues from response, while opening door.');
             }
