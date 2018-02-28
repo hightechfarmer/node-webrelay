@@ -75,7 +75,7 @@ function WebRelay(address) {
             }
 
           } else {
-            console.log(err, res.statusCode, body)
+            console.log(err, res, body)
             reject('Error while opening relay: ', res);
           }
         });
