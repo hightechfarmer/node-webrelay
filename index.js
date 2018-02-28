@@ -1,94 +1,57 @@
 'use strict';
-const Request = require('request');
-const parser  = require('xml2json');
+const axios = require('axios')
 
-const request = Request.defaults({
-  timeout: 5000
-})
-// Settings for xml2json parser
-const PARSER_SETTINGS = {
-  object: true,
-  sanitize: true
-};
+function WebRelay (address) {
+  let request
 
-// Module
-function WebRelay(address) {
   if (!address || typeof address !== 'string') {
-    throw '[WebRelay]: Address cannot be blank or a non-string value.';
+    throw {
+      err: '[WebRelay]: Address cannot be blank or a non-string value.'
+    }
+  } else {
+    request = axios.create({
+      baseURL: address
+    })
   }
 
   const API = {
-    // Fetching status from relay
-    // @return Promise
-    status() {
+    status () {
+      // TODO: implement
       return new Promise((resolve, reject) => {
-        request.get(address + '/stateFull.xml', function (err, res, body) {
-          if (!err && res.statusCode === 200) {
-            const jsonRes  = parser.toJson(body, PARSER_SETTINGS);
-
-            if (jsonRes.datavalues) {
-              resolve(jsonRes.datavalues);
-            } else {
-              reject('Could not get .datavalues from response, while getting status.');
-            }
-
+        request.get('/stateFull.xml').then(res => {
+          if (res.data) {
+            resolve()
           } else {
-            reject('Relay returned non-200 status: ' + res.statusCode);
+            reject()
           }
-        });
-      });
+        })
+      })
     },
-
-    // Closing the relay
-    // @return Promise
-    close() {
+    open () {
       return new Promise((resolve, reject) => {
-        request.get(address + '/state.xml?relayState=1', function (err, res, body) {
-          if (!err && res.statusCode === 200) {
-            const jsonRes = parser.toJson(body, PARSER_SETTINGS);
-
-            if (jsonRes.datavalues) {
-              resolve({
-                closing: true
-              });
-            } else {
-              reject('Could not get .datavalues from response, while closing door.');
-            }
-
+        request.get('/state.xml?relayState=0').then(res => {
+          if (res.status === 200) {
+            resolve()
           } else {
-            reject('Error while closing relay: ', res);
+            reject()
           }
-        });
-      });
+        })
+      })
     },
-
-    // Opening the relay
-    // @return Promise
-    open() {
+    close () {
       return new Promise((resolve, reject) => {
-        console.log(address + '/state.xml?relayState=0');
-        request.get(address + '/state.xml?relayState=0', function (err, res, body) {
-          if (!err && res.statusCode === 200) {
-            const jsonRes = parser.toJson(body, PARSER_SETTINGS);
-
-            if (jsonRes.datavalues) {
-              resolve({
-                unlocking: true
-              });
-            } else {
-              reject('Could not get .datavalues from response, while opening door.');
-            }
-
+        request.get('/state.xml?relayState=1').then(res => {
+          if (res.status === 200) {
+            resolve()
           } else {
-            console.log(err, res, body)
-            reject('Error while opening relay: ', res);
+            reject()
           }
-        });
-      });
+        })
+      })
     }
-  };
+  }
 
-  return API;
+  return API
 }
 
-exports.webRelay = WebRelay;
+exports.webRelay = WebRelay
