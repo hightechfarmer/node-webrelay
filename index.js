@@ -29,7 +29,7 @@ function WebRelay (address) {
     },
     open () {
       return new Promise((resolve, reject) => {
-        request.get('/state.xml?relayState=0').then(res => {
+        request.get('/stateFull.xml?relayState=0').then(res => {
           if (res.status === 200) {
             resolve()
           } else {
@@ -40,7 +40,7 @@ function WebRelay (address) {
     },
     close () {
       return new Promise((resolve, reject) => {
-        request.get('/state.xml?relayState=1').then(res => {
+        request.get('/stateFull.xml?relayState=1').then(res => {
           if (res.status === 200) {
             resolve()
           } else {
