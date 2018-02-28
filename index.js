@@ -43,7 +43,7 @@ function WebRelay(address) {
     // @return Promise
     close() {
       return new Promise((resolve, reject) => {
-        request.get(address + '/stateFull.xml?relayState=1', function (err, res, body) {
+        request.get(address + '/state.xml?relayState=1', function (err, res, body) {
           if (!err && res.statusCode === 200) {
             const jsonRes = parser.toJson(body, PARSER_SETTINGS);
 
@@ -64,7 +64,7 @@ function WebRelay(address) {
     // @return Promise
     open() {
       return new Promise((resolve, reject) => {
-        request.get(address + '/stateFull.xml?relayState=0', function (err, res, body) {
+        request.get(address + '/state.xml?relayState=0', function (err, res, body) {
           if (!err && res.statusCode === 200) {
             const jsonRes = parser.toJson(body, PARSER_SETTINGS);
 
