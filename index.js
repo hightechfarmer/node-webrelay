@@ -66,6 +66,7 @@ function WebRelay(address) {
     // @return Promise
     open() {
       return new Promise((resolve, reject) => {
+        console.log(address + '/state.xml?relayState=0');
         request.get(address + '/state.xml?relayState=0', function (err, res, body) {
           if (!err && res.statusCode === 200) {
             const jsonRes = parser.toJson(body, PARSER_SETTINGS);
