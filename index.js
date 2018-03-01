@@ -48,5 +48,5 @@ function WebRelay (address) {
 
   return API
 }
-q
+
 exports.webRelay = WebRelay
